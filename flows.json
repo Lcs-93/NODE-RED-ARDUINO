@@ -1,0 +1,416 @@
+[
+    {
+        "id": "2b93a1b2.7d280e",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "8ae9b436.86f3f8",
+        "type": "serial out",
+        "z": "2b93a1b2.7d280e",
+        "name": "Arduino Uno",
+        "serial": "414bbdfcd1a10ba8",
+        "x": 810,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "53d37c8e1a50c439",
+        "type": "function",
+        "z": "2b93a1b2.7d280e",
+        "name": "function 1 led",
+        "func": "// Récupérer la valeur du slider\nlet intensite = msg.payload;\n\n// Définir les valeurs par défaut pour la couleur\nlet rouge = 200;\nlet vert = 120;\nlet bleu = 0;\n\n// Si le bouton \"Rouge\" est pressé\nif (msg.topic === \"Rouge\") {\n    rouge = 200;\n}\nif (msg.topic === \"Vert\") {\n    vert = 120;\n}\nif (msg.topic === \"Bleu\") {\n    bleu = 255;\n}\n\n// Envoyer la commande au Accessory Shield via le port série\nlet messageToSend = `SET_COULEUR_LED ${rouge} ${vert} ${bleu}\\n`;\n messageToSend = `SET_INTENSITE_LED ${intensite}\\n`;\n\n// Ajouter le message pour la console série (à des fins de débogage)\nmsg.payload = messageToSend;\nconsole.log(messageToSend);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 500,
+        "wires": [
+            [
+                "8ae9b436.86f3f8",
+                "daee6b05d136f248"
+            ]
+        ]
+    },
+    {
+        "id": "540bb3eb0bf82766",
+        "type": "ui_slider",
+        "z": "2b93a1b2.7d280e",
+        "name": "",
+        "label": "Intensité led",
+        "tooltip": "",
+        "group": "770cf8b2074fc667",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "100",
+        "step": 1,
+        "className": "",
+        "x": 250,
+        "y": 580,
+        "wires": [
+            [
+                "53d37c8e1a50c439",
+                "ecc0209d916a1444"
+            ]
+        ]
+    },
+    {
+        "id": "ecc0209d916a1444",
+        "type": "ui_gauge",
+        "z": "2b93a1b2.7d280e",
+        "name": "",
+        "group": "770cf8b2074fc667",
+        "order": 1,
+        "width": "0",
+        "height": "0",
+        "gtype": "gage",
+        "title": "gauge Intensité Led",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#ffff05",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "100",
+        "diff": false,
+        "className": "",
+        "x": 490,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "daee6b05d136f248",
+        "type": "debug",
+        "z": "2b93a1b2.7d280e",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 840,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "720b758c64318526",
+        "type": "ui_gauge",
+        "z": "2b93a1b2.7d280e",
+        "name": "",
+        "group": "c12d99f0136439c2",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "°",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 750,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "6f2f9045f5be8802",
+        "type": "function",
+        "z": "2b93a1b2.7d280e",
+        "name": "function 2 temp",
+        "func": "// Définissez ces valeurs au début de votre flow Node-RED ou passez-les comme arguments à la fonction\nconst MIN_TEMPERATURE = 0;  // Remplacez par la valeur minimale attendue\nconst MAX_TEMPERATURE = 100;  // Remplacez par la valeur maximale attendue\n\n// Récupérer la température à partir de la chaîne reçue (exemple)\nlet temperatureMatch = msg.payload.match(/^TEMPERATURE (\\d+\\.\\d+)/);\n\nif (temperatureMatch) {\n    let temperature = parseFloat(temperatureMatch[1]);\n\n    // Envoyer la nouvelle température à la jauge via ui_control\n    msg.ui_control = {\n        \"min\": MIN_TEMPERATURE,\n        \"max\": MAX_TEMPERATURE,\n        \"value\": temperature\n    };\n\n    // Formater le texte pour afficher la température au-dessus de la jauge \"units\"\n    msg.ui_control.label = `${temperature} °C`;\n\n    // Vous pouvez également envoyer la température sous une forme différente si nécessaire\n    msg.payload = temperature; // Ou toute autre transformation nécessaire\n\n    return msg;\n} else {\n    // Ignorer les messages qui ne sont pas des températures\n    return null;\n}\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 220,
+        "wires": [
+            [
+                "720b758c64318526"
+            ]
+        ]
+    },
+    {
+        "id": "d6a3f43cec453bba",
+        "type": "serial in",
+        "z": "2b93a1b2.7d280e",
+        "name": "Arduino UNO in",
+        "serial": "414bbdfcd1a10ba8",
+        "x": 240,
+        "y": 120,
+        "wires": [
+            [
+                "6f2f9045f5be8802"
+            ]
+        ]
+    },
+    {
+        "id": "8a6846cac07e40f6",
+        "type": "function",
+        "z": "2b93a1b2.7d280e",
+        "name": "function 3 humidité",
+        "func": "// Définissez ces valeurs au début de votre flow Node-RED ou passez-les comme arguments à la fonction\nconst MIN_HUMIDITY = 0;  // Remplacez par la valeur minimale attendue\nconst MAX_HUMIDITY = 100;  // Remplacez par la valeur maximale attendue\n\n// Récupérer l'humidité à partir de la chaîne reçue (exemple)\nlet humidityMatch = msg.payload.match(/^HUMIDITY (\\d+\\.\\d+)/);\n\nif (humidityMatch) {\n    let humidity = parseFloat(humidityMatch[1]);\n\n    // Envoyer la nouvelle humidité à la jauge via ui_control\n    msg.ui_control = {\n        \"min\": MIN_HUMIDITY,\n        \"max\": MAX_HUMIDITY,\n        \"value\": humidity\n    };\n\n    // Formater le texte pour afficher l'humidité au-dessus de la jauge \"units\"\n    msg.ui_control.label = `${humidity} %RH`;  // %RH pourcentage d'humidité relative\n\n    // Vous pouvez également envoyer l'humidité sous une forme différente si nécessaire\n    msg.payload = humidity; // Ou toute autre transformation nécessaire\n\n    return msg;\n} else {\n    // Ignorer les messages qui ne sont pas des humidités\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 300,
+        "wires": [
+            [
+                "9535eb646efc2942"
+            ]
+        ]
+    },
+    {
+        "id": "9535eb646efc2942",
+        "type": "ui_gauge",
+        "z": "2b93a1b2.7d280e",
+        "name": "",
+        "group": "05066592831388f0",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "gauge",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": 10,
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 790,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "f8114ead5b34a294",
+        "type": "serial in",
+        "z": "2b93a1b2.7d280e",
+        "name": "Arduino UNO IN",
+        "serial": "414bbdfcd1a10ba8",
+        "x": 240,
+        "y": 280,
+        "wires": [
+            [
+                "8a6846cac07e40f6"
+            ]
+        ]
+    },
+    {
+        "id": "fd520ed6745af097",
+        "type": "ui_template",
+        "z": "2b93a1b2.7d280e",
+        "group": "86d1b9eb7be0a0c9",
+        "name": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "format": "<div ng-bind-html=\"msg.payload\"></div>\n<img src=\"https://raw.githubusercontent.com/DFRobot/DFRobotMediaWikiImage/master/Image/DFRO270-1.jpg\" alt=\"Accessory Shield V1.0\">",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 500,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "42c2dc4e23031224",
+        "type": "ui_button",
+        "z": "2b93a1b2.7d280e",
+        "name": "Vert",
+        "group": "c1bd77c7c21baea1",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "vert",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Vert",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 420,
+        "wires": [
+            [
+                "53d37c8e1a50c439"
+            ]
+        ]
+    },
+    {
+        "id": "eadcb326cf68379c",
+        "type": "ui_button",
+        "z": "2b93a1b2.7d280e",
+        "name": "Rouge",
+        "group": "c1bd77c7c21baea1",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "rouge",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Rouge",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 360,
+        "wires": [
+            [
+                "53d37c8e1a50c439"
+            ]
+        ]
+    },
+    {
+        "id": "035f887fb653fc42",
+        "type": "ui_button",
+        "z": "2b93a1b2.7d280e",
+        "name": "Bleu",
+        "group": "c1bd77c7c21baea1",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "bleu",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Bleu",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "53d37c8e1a50c439"
+            ]
+        ]
+    },
+    {
+        "id": "414bbdfcd1a10ba8",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "/dev/ttyACM0",
+        "serialbaud": "115200",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "770cf8b2074fc667",
+        "type": "ui_group",
+        "name": "Group 1",
+        "tab": "d760875930841ff1",
+        "order": 1,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "c12d99f0136439c2",
+        "type": "ui_group",
+        "name": "Group 2",
+        "tab": "d760875930841ff1",
+        "order": 2,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "05066592831388f0",
+        "type": "ui_group",
+        "name": "Group 3",
+        "tab": "d760875930841ff1",
+        "order": 3,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "86d1b9eb7be0a0c9",
+        "type": "ui_group",
+        "name": "Group 4",
+        "tab": "d760875930841ff1",
+        "order": 4,
+        "disp": true,
+        "width": 6
+    },
+    {
+        "id": "c1bd77c7c21baea1",
+        "type": "ui_group",
+        "name": "Group 5",
+        "tab": "d760875930841ff1",
+        "order": 5,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d760875930841ff1",
+        "type": "ui_tab",
+        "name": "Tab 1",
+        "icon": "dashboard",
+        "order": 1
+    }
+]
