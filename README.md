@@ -1,12 +1,11 @@
 # NODE-RED-ARDUINO
-README du Flow Node-RED
+# README du Flow Node-RED
 Ce README fournit une vue d'ensemble et des instructions pour le flux Node-RED défini dans le fichier JSON fourni. Le flux semble contrôler un Arduino Uno via une communication série et dispose d'une interface utilisateur avec des curseurs, des boutons, des jauges et un modèle affichant une image.
 
-Aperçu du Flux
-Communication Série avec Arduino Uno
-
-Le flux communique avec un Arduino Uno via le port série ("/dev/ttyACM0" avec un débit de 115200).
-Composants de l'Interface Utilisateur (UI)
+# Aperçu du Flux
+# 1-Communication Série avec Arduino Uno
+    Le flux communique avec un Arduino Uno via le port série ("/dev/ttyACM0" avec un débit de 115200).
+    Composants de l'Interface Utilisateur (UI)
 
 Curseur (Slider) : Contrôle l'intensité d'une LED.
 Jauge 1 : Affiche l'intensité de la LED.
